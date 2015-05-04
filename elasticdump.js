@@ -100,6 +100,11 @@ elasticdump.prototype.dump = function(callback, continuing, limit, offset, total
     self.input.get(limit, offset, function(err, data){
       if(err){  self.emit('error', err); }
       self.log("got " + data.length + " objects from source " + self.inputType + " (offset: "+offset+")");
+      data.forEach(function(d){
+        if(d['_source']['txid'] != undefined) {
+          d['_source']['txid'] = 0;
+        }
+      });
       if(!err || (self.options['ignore-errors'] === true || self.options['ignore-errors'] === 'true') ){
         self.output.set(data, limit, offset, function(err, writes){
           var toContinue = true;
